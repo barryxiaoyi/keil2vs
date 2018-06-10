@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="sources">
+      <UniqueIdentifier>{e5aac94e-fc17-4431-89ed-1320f3751737}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\tinyxml">
+      <UniqueIdentifier>{56e2537d-8805-468d-b442-b993675469a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resource">
+      <UniqueIdentifier>{311efcdb-fd12-41b5-b194-90beaf658a7d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\tinyxml\tinystr.cpp">
+      <Filter>sources\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxml.cpp">
+      <Filter>sources\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxmlerror.cpp">
+      <Filter>sources\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tinyxml\tinyxmlparser.cpp">
+      <Filter>sources\tinyxml</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Str.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\tinyxml\tinystr.h">
+      <Filter>sources\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tinyxml\tinyxml.h">
+      <Filter>sources\tinyxml</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Str.h">
+      <Filter>sources</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="src\keil2vs.rc">
+      <Filter>resource</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
