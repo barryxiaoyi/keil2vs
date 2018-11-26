@@ -1,0 +1,28 @@
+diff a/src/main.cpp b/src/main.cpp	(rejected hunks)
+@@ -447,21 +447,21 @@
+ 	char location[260]={0};
+ 	char compiler[260] = { 0 };
+ 
+-	about();
+-
++	//about();
++	setlocale(LC_ALL, "chs");
+ 
+ 
+ 	for(;;){
+-		printf("��Ŀ·��:");
++		cout << "��Ŀ·��:" << endl;
+ 		fgets(location,sizeof(location),stdin);
+ 		if(*location=='\n'){
+-			printf("����:·�����Ϸ�!\n");
++			cout<<"����:·�����Ϸ�!"<<endl;
+ 			continue;
+ 		}else{
+ 			dequote(location);
+ 			dereturn(location);
+ 			if(!is_file_present(location)){
+-				printf("����:�����ڵ� .uvproj �ļ�\n");
++				cout << "����:�����ڵ� .uvproj �ļ�\n" << endl;
+ 				continue;
+ 			}
+ 			break;
