@@ -168,6 +168,7 @@ bool make_dsp_file(const char* project_name,vector<string>& groups,string& defin
 	}
 
 	// 定义是逗号分隔的
+	define = define + ",__CC_ARM";	//添加__CC_ARM宏定义以正确包含stdint.h
 	char* zDefine = new char[define.length()+2];
 	memset(zDefine,0,define.length()+2);
 	strcpy(zDefine,define.c_str());
@@ -283,17 +284,18 @@ bool get_uv_info(const char* uvproj,vector<string>& groups,string& define,string
 		if (incs[0] == '.')
 		{
 			if (incs[1] == '.')
-				str_to_write << '../' << incs;
+				str_to_write << "../" << incs;
 			else
-				str_to_write << '.' << incs;
+				str_to_write << "." << incs;
 
 		}
 		else if (incs[0] == '/' || incs[0] == '\\')
 			str_to_write << ".." << incs;
 		else
 			str_to_write << "../" << incs;
-		str_to_write << ';';
+		str_to_write << ";";
 	}
+	str_to_write << "../;";
 	if(str_to_write.str().c_str()){
 		if(bXmlUtf8){
 			includepath = AStr(str_to_write.str().c_str(),true).toAnsi();
@@ -442,24 +444,12 @@ int main(int argc,char** argv)
 	string define;
 	string includepath;
 
-	char project[128]={0};
 	char location[260]={0};
-	char compiler[260]={0};
+	char compiler[260] = { 0 };
 
 	about();
 
-	for(;;){
-		printf("项目名称:");
-		fgets(project,sizeof(project),stdin);
-		if(*project=='\n'){
-			printf("错误:项目名称不合法!\n");
-			continue;
-		}else{
-			dequote(project);
-			dereturn(project);
-			break;
-		}
-	}
+
 
 	for(;;){
 		printf("项目路径:");
@@ -478,32 +468,41 @@ int main(int argc,char** argv)
 		}
 	}
 
+	string proj_name(location);
+	auto name_offset_start = proj_name.find_last_of('\\')+1;
+	auto name_offset_end = proj_name.find_last_of('.');
+	proj_name = proj_name.substr(name_offset_start, name_offset_end - name_offset_start);
+
 	for(;;){
 		printf("系统路径:");
 		fgets(compiler,sizeof(compiler),stdin);
-		if(*compiler=='\n'){
-			*compiler = '\0';
+		if(compiler[0]=='\n'){
+			compiler[0] = '\0';
 		}
 		dequote(compiler);
 		dereturn(compiler);
 		break;
 	}
 
+	string link_dir(compiler);
+	if (link_dir.length() == 0)
+		link_dir = R"(C:\Keil_v5\ARM\ARMCC\include)";
+
 	setdir(location);
 
 	try{
-		if(make_dsw_file(project)){
+		if(make_dsw_file(proj_name.c_str())){
 			if(get_uv_info(location,groups,define,includepath)){
 				includepath += ";";
 				includepath += compiler;
-				if(make_dsp_file(project,groups,define,includepath)){
+				if(make_dsp_file(proj_name.c_str(),groups,define,includepath)){
 
 				}
 			}
 		}
 	}
 	catch(...){
-		
+		printf("创建出错\r\n");		
 	}
 	system("pause");
 
