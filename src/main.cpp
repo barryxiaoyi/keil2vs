@@ -172,7 +172,7 @@ bool make_dsp_file(const char* project_name,vector<string>& groups,string& defin
 	char* zDefine = new char[define.length()+2];
 	memset(zDefine,0,define.length()+2);
 	strcpy(zDefine,define.c_str());
-	for(int iii=0; iii<define.length()+2; iii++){
+	for(size_t iii=0; iii<define.length()+2; iii++){
 		if(zDefine[iii]==','){
 			zDefine[iii] = '\0';
 		}
@@ -191,7 +191,7 @@ bool make_dsp_file(const char* project_name,vector<string>& groups,string& defin
 	char* zInclude = new char[includepath.length()+2];
 	memset(zInclude,0,includepath.length()+2);
 	strcpy(zInclude,includepath.c_str());
-	for(int jjj=0; jjj<includepath.length()+2; jjj++){
+	for(size_t jjj=0; jjj<includepath.length()+2; jjj++){
 		if(zInclude[jjj]==';'){
 			zInclude[jjj] = '\0';
 		}
@@ -276,22 +276,25 @@ bool get_uv_info(const char* uvproj,vector<string>& groups,string& define,string
 	ret_str = cIncludePath->GetText();
 	auto inc_vector = split(ret_str, ";");
 	stringstream str_to_write;
-	str_to_write << "..\\..;";
-	for ( const auto& incs:inc_vector)	//截取每个include项目
+	str_to_write << "..\\;";
+	for ( auto& incs:inc_vector)	//截取每个include项目
 	{
 		if (incs.length()<2)
 			continue;
 
-		if (incs[0] == '.')
+		int idx;
+		while ((idx = incs.find('/')) != string::npos)	//替换所有的"/"文件符号
+			incs.replace(idx, 1,"\\");
+
+		if (incs.c_str()[0] == '.')
 		{
-			if (incs[1] == '.')
+			if (incs.c_str()[1] == '.')
 				str_to_write << "..\\" << incs;
 			else
 				str_to_write << "." << incs;
-
 		}
-		else if (incs[0] == '/' || incs[0] == '\\')
-			str_to_write << "..\\" << &incs[1];
+		else if (incs.c_str()[0] == '\\')
+			str_to_write << ".." << incs;
 		else
 			str_to_write << "..\\" << incs;
 		str_to_write << ";";
@@ -330,15 +333,28 @@ bool get_uv_info(const char* uvproj,vector<string>& groups,string& define,string
 				
 				string str(AStr(eleFilePath->GetText(), bXmlUtf8).toAnsi());
 
-				if (str[str.length() - 1] != 'h' || str[str.length() - 2] != '\.')
+				if (str[str.length() - 1] != 'h' || str[str.length() - 2] != '.')		//排除*.h文件
 				{
 					string str_to_write;
-					if (str[0] == '/' || str[0] == '\\')
-						str_to_write = string("../") + str.substr(1);
-					else
-						str_to_write = string("../") + str;
+					int idx;
+					while ((idx = str.find('/')) != string::npos)	//替换所有的"/"符号
+						str.replace(idx, 1, "\\");
 
-					if (str_to_write[str_to_write.length() - 1] != 'h' || str_to_write[str_to_write.length() - 2] != '\.')
+					if (str.c_str()[0] == '.')	// ./或 .\开始
+					{
+						if (str.c_str()[1] == '\\')
+							str_to_write = string(".") + str;
+						else if (str.c_str()[1] == '.')
+							str_to_write = string("..\\") + str;
+						else
+							cout << "存在错误路径: " << str << endl;
+					}
+					else if (str.c_str()[0] == '\\')		//斜杠开始
+						str_to_write = string("..") + str;
+					else//单独文件夹名开始
+						str_to_write = string("..\\") + str;
+
+					if (str_to_write[str_to_write.length() - 1] != 'h' || str_to_write[str_to_write.length() - 2] != '.')
 						strGroup << "# Begin Source File\r\n\r\nSOURCE=\"" << str_to_write << "\"\r\n" << "# End Source File\r\n";
 				}
 			}
@@ -357,9 +373,9 @@ std::vector<std::string> split(std::string str, std::string pattern)
 	std::string::size_type pos;
 	std::vector<std::string> result;
 	str += pattern;//扩展字符串以方便操作
-	int size = str.size();
+	size_t size = str.size();
 
-	for (int i = 0; i < size; i++)
+	for (size_t i = 0; i < size; i++)
 	{
 		pos = str.find(pattern, i);
 		if (pos < size)
@@ -493,7 +509,7 @@ int main(int argc,char** argv)
 		cout << "  无有效路径，使用默认：";
 	}
 	else
-		cout << "  路径 :" << endl;
+		cout << "  路径 :";
 	cout << link_dir << endl;
 
 	setdir(location);
