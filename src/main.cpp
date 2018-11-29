@@ -315,16 +315,16 @@ bool get_uv_info(const char* uvproj,vector<string>& groups,string& define,string
 	for(TiXmlNode* group=nodeGroups->FirstChild(); group!=NULL; group=group->NextSibling()){
 		stringstream strGroup("");
 		//取得分组名称
-		TiXmlElement* eleGroupName = group->FirstChild()->ToElement();
+		TiXmlElement* eleGroupName = group->FirstChild("GroupName")->ToElement();
 		
 		strGroup<<"# Begin Group \""<<AStr(eleGroupName->GetText(),bXmlUtf8).toAnsi()<<"\"\r\n\r\n";
 		strGroup<<"# PROP Default_Filter \"\"\r\n";
 		//cout<<eleGroupName->GetText()<<endl;
 
 		//Files包含所有的文件列表
-		TiXmlNode* nodeFiles = eleGroupName->NextSibling();
+		TiXmlNode* nodeFiles = group->FirstChild("Files");
 		if(nodeFiles){
-			for(TiXmlNode* file=nodeFiles->FirstChild(); file!=NULL; file=file->NextSibling()){
+			for(TiXmlNode* file=nodeFiles->FirstChild("File"); file!=NULL; file=file->NextSibling()){
 				//文件名
 				TiXmlElement* eleFileName = file->FirstChild()->ToElement();
 				//文件路径
@@ -359,7 +359,7 @@ bool get_uv_info(const char* uvproj,vector<string>& groups,string& define,string
 				}
 			}
 		}
-		strGroup<<"# End Group\r\n";
+		strGroup<<"# End Group\r\n\r\n";
 		groups.emplace_back(strGroup.str());
 	}
 	return true;
