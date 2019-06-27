@@ -168,7 +168,7 @@ bool make_dsp_file(const char* project_name,vector<string>& groups,string& defin
 	}
 
 	// 定义是逗号分隔的
-	define = define + ",__CC_ARM";	//添加__CC_ARM宏定义以正确包含stdint.h
+	define = define + ",__CC_ARM"+",__weak= ";	//添加__CC_ARM宏定义以正确包含stdint.h
 	char* zDefine = new char[define.length()+2];
 	memset(zDefine,0,define.length()+2);
 	strcpy(zDefine,define.c_str());
