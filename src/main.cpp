@@ -283,6 +283,8 @@ bool get_uv_info(const char* uvproj,vector<string>& groups,string& define,string
 			continue;
 
 		int idx;
+		while (incs[0] == ' ')
+			incs.erase(0, 1);
 		while ((idx = incs.find('/')) != string::npos)	//替换所有的"/"文件符号
 			incs.replace(idx, 1,"\\");
 
